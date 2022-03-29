@@ -1,0 +1,12 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:14.1-alpine
+    restart: always
+    container_name: stp_db_dev
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: rootpw
+    ports:
+      - "5432:5432"

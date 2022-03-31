@@ -10,10 +10,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  COMPANY
+  TALENT
+  ADMIN
+}
+
 model User {
   id               String          @id
+  role             Role            @default(TALENT)
   companyProfile   CompanyProfile? @relation(fields: [companyProfileId], references: [id])
   companyProfileId String?
+  TalentProfile    TalentProfile?  @relation(fields: [talentProfileId], references: [id])
+  talentProfileId  String?         @unique
 }
 
 model CompanyProfile {
@@ -21,4 +30,12 @@ model CompanyProfile {
   name      String
   location  String
   employees User[]
+}
+
+model TalentProfile {
+  id        String   @id @default(uuid())
+  firstname String
+  lastname  String
+  birthdate DateTime
+  user      User?
 }

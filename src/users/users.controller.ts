@@ -103,20 +103,21 @@ export class UsersController {
 
   @Get('/role/:email')
   getRole(@Param('email') email: string) {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${this.MANAGEMENT_API_ACCESS_TOKEN}`,
-      },
-    };
-    const data = {
-      email: email,
-    };
-
     axios
-      .post(`${this.MANAGEMENT_API_URL}/api/v2/users-by-email`, data, config)
+      .get(`${this.MANAGEMENT_API_URL}/api/v2/users-by-email`, {
+        params: {
+          email,
+        },
+        headers: {
+          Authorization: `Bearer ${this.MANAGEMENT_API_ACCESS_TOKEN}`,
+        },
+      })
       .then(async (res) => {
-        console.log(res.data);
-        return (await this.usersService.findOne({ id: res.data.userId })).role;
+        return (
+          await this.usersService.findOne({
+            id: res.data[0]['user_id'].split('|')[1],
+          })
+        ).role;
       });
   }
 }

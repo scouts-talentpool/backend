@@ -100,4 +100,23 @@ export class UsersController {
   remove(@Param('id') id: string) {
     return this.usersService.remove({ id });
   }
+
+  @Get('/role/:email')
+  getRole(@Param('email') email: string) {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${this.MANAGEMENT_API_ACCESS_TOKEN}`,
+      },
+    };
+    const data = {
+      email: email,
+    };
+
+    axios
+      .post(`${this.MANAGEMENT_API_URL}/api/v2/users-by-email`, data, config)
+      .then(async (res) => {
+        console.log(res.data);
+        return (await this.usersService.findOne({ id: res.data.userId })).role;
+      });
+  }
 }

@@ -51,29 +51,29 @@ export class UsersController {
 
   // @UseGuards(AuthGuard)
   @Post()
-  async create(@Body() user: any) {
+  async create(@Body() user: Prisma.UserCreateInput) {
     const { role, ...userData } = user;
 
-    if (role.toUpperCase() == 'COMPANY') {
-      axios
-        .post(`${this.MANAGEMENT_API_URL}/api/v2/users`, userData, {
+    if (role === 'COMPANY') {
+      const res = await axios.post(
+        `${this.MANAGEMENT_API_URL}/api/v2/users`,
+        userData,
+        {
           headers: {
             Authorization: `Bearer ${this.MANAGEMENT_API_ACCESS_TOKEN}`,
           },
-        })
-        .then((res) => {
-          this.usersService.create({
-            id: res.data['user_id'].split('|')[1],
-            role: 'COMPANY',
-          });
-        })
-        .catch(console.error);
-      return;
+        },
+      );
+
+      return this.usersService.create({
+        id: res.data['user_id'].split('|')[1],
+        role: 'COMPANY',
+      });
     }
 
     this.usersService.create({
       id: user.id,
-      role: role.toUpperCase(),
+      role: role,
     });
   }
 
@@ -102,22 +102,25 @@ export class UsersController {
   }
 
   @Get('/role/:email')
-  getRole(@Param('email') email: string) {
-    axios
-      .get(`${this.MANAGEMENT_API_URL}/api/v2/users-by-email`, {
+  async getRole(@Param('email') email: string) {
+    const res = await axios.get(
+      `${this.MANAGEMENT_API_URL}/api/v2/users-by-email`,
+      {
         params: {
           email,
         },
         headers: {
           Authorization: `Bearer ${this.MANAGEMENT_API_ACCESS_TOKEN}`,
         },
+      },
+    );
+
+    const role = (
+      await this.usersService.findOne({
+        id: res.data[0]['user_id'].split('|')[1],
       })
-      .then(async (res) => {
-        return (
-          await this.usersService.findOne({
-            id: res.data[0]['user_id'].split('|')[1],
-          })
-        ).role;
-      });
+    ).role;
+
+    return { role };
   }
 }

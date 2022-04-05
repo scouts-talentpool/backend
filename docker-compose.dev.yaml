@@ -1,12 +1,13 @@
-version: "3.9"
-
 services:
-  db:
-    image: postgres:14.1-alpine
-    restart: always
-    container_name: stp_db_dev
-    environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: rootpw
+  gcp_proxy:
+    command:
+    - /cloud_sql_proxy
+    - -instances=talentpool-346307:europe-west6:talentpool=tcp:0.0.0.0:5432
+    - -credential_file=/config
+    image: gcr.io/cloudsql-docker/gce-proxy:1.29.0
     ports:
-      - "5432:5432"
+    - 127.0.0.1:5432:5432
+    volumes:
+    - ${GOOGLE_CLOUD_SERVICE_ACCOUNT_CONFIG}:/config
+    env_file: .env
+version: '3'

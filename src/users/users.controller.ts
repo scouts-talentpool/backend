@@ -49,7 +49,7 @@ export class UsersController {
     }
   }
 
-  // @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
   @Post()
   async create(@Body() user: Prisma.UserCreateInput) {
     const { role, ...userData } = user;

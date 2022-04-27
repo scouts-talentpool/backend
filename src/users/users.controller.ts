@@ -13,7 +13,6 @@ import { UsersService } from './users.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
-import { stringify } from 'querystring';
 
 @Controller('users')
 export class UsersController {

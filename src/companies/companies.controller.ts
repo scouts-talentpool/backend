@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { TalentProfile, Prisma } from '@prisma/client';
 import { CompaniesService } from './companies.service';
@@ -19,19 +20,25 @@ export class CompaniesController {
   @UseGuards(AuthGuard)
   @Post()
   create(@Body() companyProfile: Prisma.CompanyProfileCreateInput) {
-    return this.companiesService.create(companyProfile);
+    return this.companiesService.createCompany(companyProfile);
   }
 
   @UseGuards(AuthGuard)
   @Get()
-  findAll() {
-    return this.companiesService.findMany({});
+  findAll(@Query('take') take: string, @Query('cursor') cursor: string) {
+    return this.companiesService.findCompanies({
+      take: +take,
+      cursor: {
+        cursor: +cursor,
+      },
+      where: {},
+    });
   }
 
   @UseGuards(AuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.companiesService.findOne({ id });
+    return this.companiesService.findCompany({ id });
   }
 
   @UseGuards(AuthGuard)
@@ -40,7 +47,7 @@ export class CompaniesController {
     @Param('id') id: string,
     @Body() companyProfile: Prisma.CompanyProfileUpdateInput,
   ) {
-    return this.companiesService.update({
+    return this.companiesService.updateCompany({
       where: { id },
       data: companyProfile,
     });
@@ -49,6 +56,6 @@ export class CompaniesController {
   @UseGuards(AuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.companiesService.remove({ id });
+    return this.companiesService.removeCompany({ id });
   }
 }

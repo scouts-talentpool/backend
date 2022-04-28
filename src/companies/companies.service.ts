@@ -6,34 +6,32 @@ import { PrismaService } from 'src/prisma.service';
 export class CompaniesService {
   constructor(private prisma: PrismaService) {}
 
-  async create(data: Prisma.CompanyProfileCreateInput) {
+  async createCompany(data: Prisma.CompanyProfileCreateInput) {
     return await this.prisma.companyProfile.create({ data });
   }
 
-  async findMany(params: {
-    skip?: number;
-    take?: number;
-    cursor?: Prisma.CompanyProfileWhereUniqueInput;
-    where?: Prisma.CompanyProfileWhereInput;
-    orderBy?: Prisma.CompanyProfileOrderByWithRelationInput;
+  async findCompanies(params: {
+    take: number;
+    cursor: Prisma.CompanyProfileWhereUniqueInput;
+    where: Prisma.CompanyProfileWhereInput;
   }) {
-    return await this.prisma.companyProfile.findMany({ ...params });
+    return await this.prisma.companyProfile.findMany({ ...params, skip: 1 });
   }
 
-  async findOne(
+  async findCompany(
     where: Prisma.CompanyProfileWhereUniqueInput,
   ): Promise<CompanyProfile | null> {
     return await this.prisma.companyProfile.findUnique({ where });
   }
 
-  async update(params: {
+  async updateCompany(params: {
     where: Prisma.CompanyProfileWhereUniqueInput;
     data: Prisma.CompanyProfileUpdateInput;
   }): Promise<CompanyProfile> {
     return await this.prisma.companyProfile.update({ ...params });
   }
 
-  async remove(
+  async removeCompany(
     where: Prisma.CompanyProfileWhereUniqueInput,
   ): Promise<CompanyProfile> {
     return await this.prisma.companyProfile.delete({ where });

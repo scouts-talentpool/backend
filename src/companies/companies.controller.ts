@@ -19,14 +19,14 @@ export class CompaniesController {
 
   @UseGuards(AuthGuard)
   @Post()
-  create(@Body() companyProfile: Prisma.CompanyProfileCreateInput) {
-    return this.companiesService.createCompany(companyProfile);
+  async create(@Body() companyProfile: Prisma.CompanyProfileCreateInput) {
+    return await this.companiesService.createCompany(companyProfile);
   }
 
   @UseGuards(AuthGuard)
   @Get()
-  findAll(@Query('take') take: string, @Query('cursor') cursor: string) {
-    return this.companiesService.findCompanies({
+  async findAll(@Query('take') take: string, @Query('cursor') cursor: string) {
+    return await this.companiesService.findCompanies({
       take: +take,
       cursor: {
         cursor: +cursor,
@@ -37,17 +37,17 @@ export class CompaniesController {
 
   @UseGuards(AuthGuard)
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.companiesService.findCompany({ id });
+  async findOne(@Param('id') id: string) {
+    return await this.companiesService.findCompany({ id });
   }
 
   @UseGuards(AuthGuard)
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() companyProfile: Prisma.CompanyProfileUpdateInput,
   ) {
-    return this.companiesService.updateCompany({
+    return await this.companiesService.updateCompany({
       where: { id },
       data: companyProfile,
     });
@@ -55,7 +55,7 @@ export class CompaniesController {
 
   @UseGuards(AuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.companiesService.removeCompany({ id });
+  async remove(@Param('id') id: string) {
+    return await this.companiesService.removeCompany({ id });
   }
 }

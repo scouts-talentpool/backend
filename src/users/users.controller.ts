@@ -66,7 +66,7 @@ export class UsersController {
         },
       );
 
-      return this.usersService.createUser({
+      return await this.usersService.createUser({
         id: res.data['user_id'].split('|')[1],
         role: 'COMPANY',
       });
@@ -98,20 +98,20 @@ export class UsersController {
 
   @UseGuards(AuthGuard)
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.getUser({ id });
+  async findOne(@Param('id') id: string) {
+    return await this.usersService.getUser({ id });
   }
 
   @UseGuards(AuthGuard)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() user: Prisma.UserUpdateInput) {
-    return this.usersService.updateUser({ where: { id }, data: user });
+  async update(@Param('id') id: string, @Body() user: Prisma.UserUpdateInput) {
+    return await this.usersService.updateUser({ where: { id }, data: user });
   }
 
   @UseGuards(AuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.removeUser({ id });
+  async remove(@Param('id') id: string) {
+    return await this.usersService.removeUser({ id });
   }
 
   @Get('/role/:email')

@@ -19,14 +19,14 @@ export class TalentsController {
 
   @UseGuards(AuthGuard)
   @Post()
-  create(@Body() talentProfile: Prisma.TalentProfileCreateInput) {
-    return this.talentsService.createTalent(talentProfile);
+  async create(@Body() talentProfile: Prisma.TalentProfileCreateInput) {
+    return await this.talentsService.createTalent(talentProfile);
   }
 
   @UseGuards(AuthGuard)
   @Get()
-  findAll(@Query('take') take: string, @Query('cursor') cursor: string) {
-    return this.talentsService.findTalents({
+  async findAll(@Query('take') take: string, @Query('cursor') cursor: string) {
+    return await this.talentsService.findTalents({
       take: +take,
       cursor: { cursor: +cursor },
       where: {},
@@ -35,17 +35,17 @@ export class TalentsController {
 
   @UseGuards(AuthGuard)
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.talentsService.findTalent({ id });
+  async findOne(@Param('id') id: string) {
+    return await this.talentsService.findTalent({ id });
   }
 
   @UseGuards(AuthGuard)
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() talentProfile: Prisma.TalentProfileUpdateInput,
   ) {
-    return this.talentsService.updateTalent({
+    return await this.talentsService.updateTalent({
       where: { id },
       data: talentProfile,
     });
@@ -53,7 +53,7 @@ export class TalentsController {
 
   @UseGuards(AuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.talentsService.removeTalent({ id });
+  async remove(@Param('id') id: string) {
+    return await this.talentsService.removeTalent({ id });
   }
 }

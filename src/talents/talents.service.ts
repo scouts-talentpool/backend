@@ -15,7 +15,10 @@ export class TalentsService {
     cursor: Prisma.TalentProfileWhereUniqueInput;
     where: Prisma.TalentProfileWhereInput;
   }) {
-    return await this.prisma.talentProfile.findMany({ ...params, skip: 1 });
+    return await this.prisma.talentProfile.findMany({
+      ...params,
+      orderBy: { cursor: 'asc' },
+    });
   }
 
   async findTalent(

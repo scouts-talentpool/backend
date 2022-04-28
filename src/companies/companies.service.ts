@@ -15,7 +15,11 @@ export class CompaniesService {
     cursor: Prisma.CompanyProfileWhereUniqueInput;
     where: Prisma.CompanyProfileWhereInput;
   }) {
-    return await this.prisma.companyProfile.findMany({ ...params, skip: 1 });
+    const result = await this.prisma.companyProfile.findMany({
+      ...params,
+      orderBy: { cursor: 'asc' },
+    });
+    return result;
   }
 
   async findCompany(

@@ -15,7 +15,10 @@ export class UsersService {
     cursor: Prisma.UserWhereUniqueInput;
     where: Prisma.UserWhereInput;
   }) {
-    return await this.prisma.user.findMany({ ...params, skip: 1 });
+    return await this.prisma.user.findMany({
+      ...params,
+      orderBy: { cursor: 'asc' },
+    });
   }
 
   async getUser(where: Prisma.UserWhereUniqueInput): Promise<User | null> {
@@ -26,7 +29,9 @@ export class UsersService {
     where: Prisma.UserWhereUniqueInput;
     data: Prisma.UserUpdateInput;
   }): Promise<User> {
-    return await this.prisma.user.update({ ...params });
+    return await this.prisma.user.update({
+      ...params,
+    });
   }
 
   async removeUser(where: Prisma.UserWhereUniqueInput): Promise<User> {

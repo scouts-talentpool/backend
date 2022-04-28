@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { TalentProfile, Prisma } from '@prisma/client';
 import { TalentsService } from './talents.service';
@@ -19,19 +20,23 @@ export class TalentsController {
   @UseGuards(AuthGuard)
   @Post()
   create(@Body() talentProfile: Prisma.TalentProfileCreateInput) {
-    return this.talentsService.create(talentProfile);
+    return this.talentsService.createTalent(talentProfile);
   }
 
   @UseGuards(AuthGuard)
   @Get()
-  findAll() {
-    return this.talentsService.findMany({});
+  findAll(@Query('take') take: string, @Query('cursor') cursor: string) {
+    return this.talentsService.findTalents({
+      take: +take,
+      cursor: { cursor: +cursor },
+      where: {},
+    });
   }
 
   @UseGuards(AuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.talentsService.findOne({ id });
+    return this.talentsService.findTalent({ id });
   }
 
   @UseGuards(AuthGuard)
@@ -40,12 +45,15 @@ export class TalentsController {
     @Param('id') id: string,
     @Body() talentProfile: Prisma.TalentProfileUpdateInput,
   ) {
-    return this.talentsService.update({ where: { id }, data: talentProfile });
+    return this.talentsService.updateTalent({
+      where: { id },
+      data: talentProfile,
+    });
   }
 
   @UseGuards(AuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.talentsService.remove({ id });
+    return this.talentsService.removeTalent({ id });
   }
 }

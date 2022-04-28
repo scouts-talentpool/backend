@@ -18,6 +18,7 @@ enum Role {
 
 model User {
   id               String          @id
+  cursor           Int             @unique @default(autoincrement())
   role             Role            @default(TALENT)
   companyProfile   CompanyProfile? @relation(fields: [companyProfileId], references: [id])
   companyProfileId String?
@@ -27,6 +28,7 @@ model User {
 
 model CompanyProfile {
   id        String @id @default(uuid())
+  cursor    Int    @unique @default(autoincrement())
   name      String
   location  String
   employees User[]
@@ -34,6 +36,7 @@ model CompanyProfile {
 
 model TalentProfile {
   id        String   @id @default(uuid())
+  cursor    Int      @unique @default(autoincrement())
   firstname String
   lastname  String
   birthdate DateTime

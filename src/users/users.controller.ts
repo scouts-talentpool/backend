@@ -7,12 +7,14 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
-import { User, Prisma } from '@prisma/client';
+import { Role, Prisma } from '@prisma/client';
 import { UsersService } from './users.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
+import { isNumberObject } from 'util/types';
 
 @Controller('users')
 export class UsersController {
@@ -64,13 +66,13 @@ export class UsersController {
         },
       );
 
-      return this.usersService.create({
+      return this.usersService.createUser({
         id: res.data['user_id'].split('|')[1],
         role: 'COMPANY',
       });
     }
 
-    this.usersService.create({
+    this.usersService.createUser({
       id: user.id,
       role: role,
     });
@@ -78,26 +80,38 @@ export class UsersController {
 
   @UseGuards(AuthGuard)
   @Get()
-  findAll() {
-    return this.usersService.findMany({});
+  async getAllUsers(
+    @Query('take') take: string,
+    @Query('cursor') cursor: string,
+    @Query('role') role: string,
+  ) {
+    return await this.usersService.getUsers({
+      take: +take,
+      cursor: {
+        cursor: +cursor,
+      },
+      where: {
+        role: role as Role,
+      },
+    });
   }
 
   @UseGuards(AuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.usersService.findOne({ id });
+    return this.usersService.getUser({ id });
   }
 
   @UseGuards(AuthGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() user: Prisma.UserUpdateInput) {
-    return this.usersService.update({ where: { id }, data: user });
+    return this.usersService.updateUser({ where: { id }, data: user });
   }
 
   @UseGuards(AuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.usersService.remove({ id });
+    return this.usersService.removeUser({ id });
   }
 
   @Get('/role/:email')
@@ -115,7 +129,7 @@ export class UsersController {
     );
 
     const role = (
-      await this.usersService.findOne({
+      await this.usersService.getUser({
         id: res.data[0]['user_id'].split('|')[1],
       })
     ).role;

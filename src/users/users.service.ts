@@ -6,32 +6,30 @@ import { PrismaService } from 'src/prisma.service';
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async create(data: Prisma.UserCreateInput) {
+  async createUser(data: Prisma.UserCreateInput) {
     return await this.prisma.user.create({ data });
   }
 
-  async findMany(params: {
-    skip?: number;
-    take?: number;
-    cursor?: Prisma.UserWhereUniqueInput;
-    where?: Prisma.UserWhereInput;
-    orderBy?: Prisma.UserOrderByWithRelationInput;
+  async getUsers(params: {
+    take: number;
+    cursor: Prisma.UserWhereUniqueInput;
+    where: Prisma.UserWhereInput;
   }) {
-    return await this.prisma.user.findMany({ ...params });
+    return await this.prisma.user.findMany({ ...params, skip: 1 });
   }
 
-  async findOne(where: Prisma.UserWhereUniqueInput): Promise<User | null> {
+  async getUser(where: Prisma.UserWhereUniqueInput): Promise<User | null> {
     return await this.prisma.user.findUnique({ where });
   }
 
-  async update(params: {
+  async updateUser(params: {
     where: Prisma.UserWhereUniqueInput;
     data: Prisma.UserUpdateInput;
   }): Promise<User> {
     return await this.prisma.user.update({ ...params });
   }
 
-  async remove(where: Prisma.UserWhereUniqueInput): Promise<User> {
+  async removeUser(where: Prisma.UserWhereUniqueInput): Promise<User> {
     return await this.prisma.user.delete({ where });
   }
 }

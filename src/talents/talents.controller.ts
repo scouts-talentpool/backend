@@ -9,7 +9,7 @@ import {
   UseGuards,
   Query,
 } from '@nestjs/common';
-import { TalentProfile, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { TalentsService } from './talents.service';
 import { AuthGuard } from '../auth/auth.guard';
 
@@ -19,13 +19,16 @@ export class TalentsController {
 
   @UseGuards(AuthGuard)
   @Post()
-  async create(@Body() talentProfile: Prisma.TalentProfileCreateInput) {
+  async createTalent(@Body() talentProfile: Prisma.TalentProfileCreateInput) {
     return await this.talentsService.createTalent(talentProfile);
   }
 
   @UseGuards(AuthGuard)
   @Get()
-  async findAll(@Query('take') take: string, @Query('cursor') cursor: string) {
+  async getTalents(
+    @Query('take') take: string,
+    @Query('cursor') cursor: string,
+  ) {
     return await this.talentsService.findTalents({
       take: +take,
       cursor: { cursor: +cursor },
@@ -35,13 +38,13 @@ export class TalentsController {
 
   @UseGuards(AuthGuard)
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  async getTalent(@Param('id') id: string) {
     return await this.talentsService.findTalent({ id });
   }
 
   @UseGuards(AuthGuard)
   @Patch(':id')
-  async update(
+  async updateTalent(
     @Param('id') id: string,
     @Body() talentProfile: Prisma.TalentProfileUpdateInput,
   ) {
@@ -53,7 +56,7 @@ export class TalentsController {
 
   @UseGuards(AuthGuard)
   @Delete(':id')
-  async remove(@Param('id') id: string) {
+  async removeTalent(@Param('id') id: string) {
     return await this.talentsService.removeTalent({ id });
   }
 }

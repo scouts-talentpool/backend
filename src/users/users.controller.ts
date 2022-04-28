@@ -12,75 +12,43 @@ import {
 import { Role, Prisma } from '@prisma/client';
 import { UsersService } from './users.service';
 import { AuthGuard } from '../auth/auth.guard';
-import { ConfigService } from '@nestjs/config';
-import axios from 'axios';
-import { isNumberObject } from 'util/types';
+import { Auth0Service } from 'src/auth0.service';
+
+type UserCreateInput = {
+  email: string;
+  password: string;
+  given_name: string;
+  family_name: string;
+  role: Role;
+};
 
 @Controller('users')
 export class UsersController {
-  private MANAGEMENT_API_URL: string;
-  private MANAGEMENT_API_AUDIENCE: string;
-  private AUTH0_CLIENT_ID: string;
-  private AUTH0_CLIENT_SECRET: string;
-
-  private MANAGEMENT_API_ACCESS_TOKEN: string;
-
   constructor(
     private readonly usersService: UsersService,
-    private readonly configService: ConfigService,
-  ) {
-    this.MANAGEMENT_API_URL = configService.get<string>('MANAGEMENT_API_URL');
-    this.MANAGEMENT_API_AUDIENCE = configService.get<string>(
-      'MANAGEMENT_API_AUDIENCE',
-    );
-    this.AUTH0_CLIENT_ID = configService.get<string>('AUTH0_CLIENT_ID');
-    this.AUTH0_CLIENT_SECRET = configService.get<string>('AUTH0_CLIENT_SECRET');
-
-    if (!this.MANAGEMENT_API_ACCESS_TOKEN) {
-      axios
-        .post(`${this.MANAGEMENT_API_URL}/oauth/token`, {
-          client_id: this.AUTH0_CLIENT_ID,
-          client_secret: this.AUTH0_CLIENT_SECRET,
-          audience: this.MANAGEMENT_API_AUDIENCE,
-          grant_type: 'client_credentials',
-        })
-        .then((res) => {
-          this.MANAGEMENT_API_ACCESS_TOKEN = res.data['access_token'];
-        });
-    }
-  }
+    private readonly auth0Service: Auth0Service,
+  ) {}
 
   @UseGuards(AuthGuard)
   @Post()
-  async create(@Body() user: Prisma.UserCreateInput) {
-    const { role, ...userData } = user;
+  async createUser(@Body() user: UserCreateInput) {
+    const { email, password, given_name, family_name, role } = user;
 
-    if (role === 'COMPANY') {
-      const res = await axios.post(
-        `${this.MANAGEMENT_API_URL}/api/v2/users`,
-        userData,
-        {
-          headers: {
-            Authorization: `Bearer ${this.MANAGEMENT_API_ACCESS_TOKEN}`,
-          },
-        },
-      );
-
-      return await this.usersService.createUser({
-        id: res.data['user_id'].split('|')[1],
-        role: 'COMPANY',
-      });
-    }
-
-    this.usersService.createUser({
-      id: user.id,
-      role: role,
+    const newUser = await this.auth0Service.managementClient.createUser({
+      connection: 'Talentpool',
+      email,
+      password,
+      given_name,
+      family_name,
     });
+
+    const { user_id } = newUser;
+    return await this.usersService.createUser({ id: user_id, role });
   }
 
   @UseGuards(AuthGuard)
   @Get()
-  async getAllUsers(
+  async getUsers(
     @Query('take') take: string,
     @Query('cursor') cursor: string,
     @Query('role') role: string,
@@ -98,42 +66,22 @@ export class UsersController {
 
   @UseGuards(AuthGuard)
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  async getUser(@Param('id') id: string) {
     return await this.usersService.getUser({ id });
   }
 
   @UseGuards(AuthGuard)
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() user: Prisma.UserUpdateInput) {
+  async updateUser(
+    @Param('id') id: string,
+    @Body() user: Prisma.UserUpdateInput,
+  ) {
     return await this.usersService.updateUser({ where: { id }, data: user });
   }
 
   @UseGuards(AuthGuard)
   @Delete(':id')
-  async remove(@Param('id') id: string) {
+  async removeUser(@Param('id') id: string) {
     return await this.usersService.removeUser({ id });
-  }
-
-  @Get('/role/:email')
-  async getRole(@Param('email') email: string) {
-    const res = await axios.get(
-      `${this.MANAGEMENT_API_URL}/api/v2/users-by-email`,
-      {
-        params: {
-          email,
-        },
-        headers: {
-          Authorization: `Bearer ${this.MANAGEMENT_API_ACCESS_TOKEN}`,
-        },
-      },
-    );
-
-    const role = (
-      await this.usersService.getUser({
-        id: res.data[0]['user_id'].split('|')[1],
-      })
-    ).role;
-
-    return { role };
   }
 }

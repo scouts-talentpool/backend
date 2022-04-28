@@ -19,13 +19,18 @@ export class CompaniesController {
 
   @UseGuards(AuthGuard)
   @Post()
-  async create(@Body() companyProfile: Prisma.CompanyProfileCreateInput) {
+  async createCompany(
+    @Body() companyProfile: Prisma.CompanyProfileCreateInput,
+  ) {
     return await this.companiesService.createCompany(companyProfile);
   }
 
   @UseGuards(AuthGuard)
   @Get()
-  async findAll(@Query('take') take: string, @Query('cursor') cursor: string) {
+  async findCompanies(
+    @Query('take') take: string,
+    @Query('cursor') cursor: string,
+  ) {
     return await this.companiesService.findCompanies({
       take: +take,
       cursor: {
@@ -37,13 +42,13 @@ export class CompaniesController {
 
   @UseGuards(AuthGuard)
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  async findCompany(@Param('id') id: string) {
     return await this.companiesService.findCompany({ id });
   }
 
   @UseGuards(AuthGuard)
   @Patch(':id')
-  async update(
+  async updateCompany(
     @Param('id') id: string,
     @Body() companyProfile: Prisma.CompanyProfileUpdateInput,
   ) {
@@ -55,7 +60,7 @@ export class CompaniesController {
 
   @UseGuards(AuthGuard)
   @Delete(':id')
-  async remove(@Param('id') id: string) {
+  async removeCompany(@Param('id') id: string) {
     return await this.companiesService.removeCompany({ id });
   }
 }

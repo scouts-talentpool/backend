@@ -37,8 +37,6 @@ model CompanyProfile {
 model TalentProfile {
   id        String   @id @default(uuid())
   cursor    Int      @unique @default(autoincrement())
-  firstname String
-  lastname  String
   birthdate DateTime
   user      User?
 }

@@ -9,6 +9,8 @@ RUN npm install
 
 COPY . .
 
+RUN npm run build
+
 FROM node:16.15.0-alpine
 
 COPY --from=build /app/node_modules ./node_modules

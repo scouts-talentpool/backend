@@ -73,5 +73,5 @@ jobs:
         uses: 'google-github-actions/deploy-cloudrun@v0'
         with:
           service: '${{ env.SERVICE }}'
-          image: '${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}'
+          image: '${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:master'
           region: '${{ env.REGION }}'

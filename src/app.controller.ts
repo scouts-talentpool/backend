@@ -2,7 +2,7 @@ import { Controller, Get } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { faker } from '@faker-js/faker';
 import { PrismaService } from './prisma.service';
-import { User, CompanyProfile, TalentProfile } from '@prisma/client';
+import { User, CompanyProfile, TalentProfile, Prisma } from '@prisma/client';
 
 @Controller()
 export class AppController {
@@ -10,50 +10,49 @@ export class AppController {
 
   // @Get('generate')
   // async generateTestData() {
-  //   console.log('neger');
   //   for (let index = 0; index < 20; index++) {
   //     let companyId = faker.datatype.uuid();
 
-  //     let company: CompanyProfile = {
-  //       id: companyId,
-  //       location: faker.address.city(),
-  //       name: faker.company.companyName(),
+  //     let company = {
+  //         id: companyId,
+  //         location: faker.address.city(),
+  //         name: faker.company.companyName(),
   //     };
 
   //     await this.prismaService.companyProfile.create({ data: company });
 
   //     for (let index = 0; index < 100; index++) {
-  //       let employee: User = {
+  //       let employee = {
   //         id: faker.datatype.uuid(),
   //         role: 'COMPANY',
-  //         companyProfileId: companyId,
   //         talentProfileId: null,
+  //         companyProfileId: companyId,
   //       };
 
-  //       await this.prismaService.user.create({ data: employee });
+  //       await this.prismaService.user.create({ data: employee as User });
   //     }
   //   }
 
   //   for (let index = 0; index < 200; index++) {
   //     let talentId = faker.datatype.uuid();
 
-  //     let talent: TalentProfile = {
-  //       id: talentId,
-  //       firstname: faker.name.firstName(),
-  //       lastname: faker.name.lastName(),
-  //       birthdate: faker.date.past(),
+  //     let talent = {
+  //         id: talentId,
+  //         firstname: faker.name.firstName(),
+  //         lastname: faker.name.lastName(),
+  //         birthdate: faker.date.past(),
   //     };
 
   //     await this.prismaService.talentProfile.create({ data: talent });
 
-  //     let user: User = {
+  //     let user = {
   //       id: faker.datatype.uuid(),
   //       role: 'TALENT',
-  //       companyProfileId: null,
   //       talentProfileId: talentId,
+  //       companyProfileId: null,
   //     };
 
-  //     await this.prismaService.user.create({ data: user });
+  //     await this.prismaService.user.create({ data: user as User });
   //   }
   // }
 }

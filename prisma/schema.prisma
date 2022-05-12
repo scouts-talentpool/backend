@@ -22,7 +22,7 @@ model User {
   role             Role            @default(TALENT)
   companyProfile   CompanyProfile? @relation(fields: [companyProfileId], references: [id])
   companyProfileId String?
-  TalentProfile    TalentProfile?  @relation(fields: [talentProfileId], references: [id])
+  talentProfile    TalentProfile?  @relation(fields: [talentProfileId], references: [id])
   talentProfileId  String?         @unique
 }
 
@@ -38,5 +38,7 @@ model TalentProfile {
   id        String   @id @default(uuid())
   cursor    Int      @unique @default(autoincrement())
   birthdate DateTime
+  firstname String
+  lastname  String
   user      User?
 }

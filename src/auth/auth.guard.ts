@@ -11,12 +11,12 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  private AUTH0_AUDIENCE: string;
+  private AUTH_AUDIENCE: string;
   private AUTH0_DOMAIN: string;
 
   constructor(private configService: ConfigService) {
-    this.AUTH0_AUDIENCE = configService.get<string>('AUTH0_AUDIENCE');
-    this.AUTH0_DOMAIN = configService.get<string>('AUTH0_DOMAIN');
+    this.AUTH_AUDIENCE = configService.get<string>('AUTH_AUDIENCE');
+    this.AUTH0_DOMAIN = `https://${configService.get<string>('AUTH0_DOMAIN')}/`;
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -31,7 +31,7 @@ export class AuthGuard implements CanActivate {
           jwksRequestsPerMinute: 5,
           jwksUri: `${this.AUTH0_DOMAIN}.well-known/jwks.json`,
         }),
-        audience: this.AUTH0_AUDIENCE,
+        audience: this.AUTH_AUDIENCE,
         issuer: this.AUTH0_DOMAIN,
         algorithms: ['RS256'],
       }),

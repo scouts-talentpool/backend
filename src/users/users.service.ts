@@ -11,9 +11,9 @@ export class UsersService {
   }
 
   async getUsers(params: {
-    take: number;
-    cursor: Prisma.UserWhereUniqueInput;
-    where: Prisma.UserWhereInput;
+    take?: number;
+    cursor?: Prisma.UserWhereUniqueInput;
+    where?: Prisma.UserWhereInput;
   }) {
     return await this.prisma.user.findMany({
       ...params,

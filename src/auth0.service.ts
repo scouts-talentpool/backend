@@ -1,6 +1,6 @@
-import { INestApplication, Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ManagementClient, AuthenticationClient } from 'auth0';
+import { ManagementClient } from 'auth0';
 
 @Injectable()
 export class Auth0Service {
@@ -18,7 +18,9 @@ export class Auth0Service {
       domain: this.configService.get<string>('AUTH0_DOMAIN'),
       clientId: this.configService.get<string>('AUTH0_CLIENT_ID'),
       clientSecret: this.configService.get<string>('AUTH0_CLIENT_SECRET'),
-      audience: this.configService.get<string>('AUTH0_AUDIENCE'),
+      audience: `https://${this.configService.get<string>(
+        'AUTH0_DOMAIN',
+      )}/api/v2/`,
       scope: 'create:users read:users delete:users',
     });
   }

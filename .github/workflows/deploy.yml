@@ -11,6 +11,7 @@ env:
   REGISTRY: europe-west6-docker.pkg.dev
   PROJECT_ID: ${{ secrets.GCP_PROJECT }}
   SERVICE: talentpool-api
+  PORT: 80
   
 jobs:
   build:
@@ -19,6 +20,8 @@ jobs:
     permissions:
       contents: read
       id-token: write
+      
+    environment: production
       
     steps:
       - name: Checkout Repository
@@ -59,12 +62,4 @@ jobs:
           service: ${{ env.SERVICE }}
           image: ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ github.repository }}:${{ github.sha }}
           region: ${{ env.REGION }}
-          secrets: |
-            DATABASE_URL=${{ secrets.DATABASE_URL }}
-            AUTH0_DOMAIN=${{ secrets.AUTH0_DOMAIN }}
-            AUTH0_CLIENT_ID=${{ secrets.AUTH0_CLIENT_ID }}
-            AUTH0_CLIENT_SECRET=${{ secrets.AUTH0_CLIENT_SECRET }}
-            AUTH0_USER_DATABASE=${{ secrets.AUTH0_USER_DATABASE }}
-            AUTH0_AUDIENCE=${{ secrets.AUTH0_AUDIENCE }}
-          env_vars: PORT=80
             

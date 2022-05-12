@@ -74,7 +74,7 @@ jobs:
         run: cosign sign ${{ steps.meta.outputs.tags }}@${{ steps.build-and-push.outputs.digest }}
         
       # authenticate to gcp
-      - id: authenticate to gcp
+      - name: authenticate to gcp
         uses: 'google-github-actions/auth@v0'
         with:
           credentials_json: '${{ secrets.GCP_SA_KEY }}'

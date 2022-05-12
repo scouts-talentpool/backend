@@ -11,6 +11,7 @@ env:
   REGISTRY: europe-west6-docker.pkg.dev
   PROJECT_ID: ${{ secrets.GCP_PROJECT }}
   SERVICE: talentpool-api
+  PORT: 80
   
   # application secrets
   DATABASE_URL: ${{ secrets.DATABASE_URL }}

@@ -8,8 +8,8 @@ on:
 
 env:
   REGION: europe-west6
-  REGISTRY: ${{ env.REGION }}-docker.pkg.dev
-  PROJECT_ID: ${{ GCP_PROJECT }}
+  REGISTRY: europe-west6-docker.pkg.dev
+  PROJECT_ID: ${{ secrets.GCP_PROJECT }}
   REPOSITORY: backend
   SERVICE: talentpool-api
   

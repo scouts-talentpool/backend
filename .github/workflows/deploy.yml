@@ -1,4 +1,4 @@
-name: deploy to google cloud run
+name: Deploy to Google Cloud Run
 
 on:
   push:
@@ -30,17 +30,17 @@ jobs:
       id-token: write
       
     steps:
-      - name: checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
       # authenticate to gcp
-      - name: authenticate to gcp
+      - name: Authenticate to Google Cloud Platform
         uses: google-github-actions/auth@v0
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
           
       # build the docker image
-      - name: Build
+      - name: Build the Docker image
         run: |-
           docker build \
             --tag ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ github.repository }}:${{ github.sha }} \
@@ -49,12 +49,12 @@ jobs:
             .
             
       # push the docker image to google artifact registry
-      - name: publish
+      - name: Publish the Docker image
         run: |-
           docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ github.repository }}:${{ github.sha }}
 
       # deploy to google cloud run
-      - name: deploy to google cloud run
+      - name: Deploy to Google Cloud Run
         uses: google-github-actions/deploy-cloudrun@v0
         with:
           service: ${{ env.SERVICE }}

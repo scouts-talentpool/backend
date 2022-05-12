@@ -8,7 +8,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: talentpool-api
+  IMAGE_NAME: ${{ github.repository }}
   SERVICE: talentpool-api
   REGION: europe-west6
   
@@ -38,7 +38,7 @@ jobs:
         uses: docker/setup-buildx-action@79abd3f86f79a9d68a23c75a09a9a85889262adf
 
       # login against ghcr
-      - name: log into registry ${{ env.REGISTRY }}
+      - name: log into registry
         uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
         with:
           registry: ${{ env.REGISTRY }}

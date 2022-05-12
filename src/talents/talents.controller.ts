@@ -20,7 +20,11 @@ export class TalentsController {
   @UseGuards(AuthGuard)
   @Post()
   async createTalent(@Body() talentProfile: Prisma.TalentProfileCreateInput) {
-    return await this.talentsService.createTalent(talentProfile);
+    return await this.talentsService.createTalent({
+      firstname: talentProfile.firstname,
+      lastname: talentProfile.lastname,
+      birthdate: new Date(talentProfile.birthdate.toString())
+    });
   }
 
   @UseGuards(AuthGuard)

@@ -17,7 +17,4 @@ COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/package*.json ./
 COPY --from=build /app/dist ./dist
 
-ENV PORT 80
-EXPOSE 80
-
 CMD ["npm", "run", "start"]

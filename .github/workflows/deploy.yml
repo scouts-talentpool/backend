@@ -1,0 +1,88 @@
+name: deploy to google cloud run
+
+on:
+  push:
+    branches: [ master ]
+    # publish semver tags as releases.
+    tags: [ 'v*.*.*' ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: talentpool-api
+  SERVICE: talentpool-api
+  REGION: europe-west6
+  
+  # application secrets
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+  AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
+  AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID }}
+  AUTH0_CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET }}
+  AUTH0_USER_DATABASE: ${{ secrets.AUTH0_USER_DATABASE }}
+  AUTH0_AUDIENCE: ${{ secrets.AUTH0_AUDIENCE }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v3
+
+      # https://github.com/sigstore/cosign-installer
+      - name: install cosign
+        uses: sigstore/cosign-installer@d6a3abf1bdea83574e28d40543793018b6035605
+        with:
+          cosign-release: 'v1.7.1'
+
+      # workaround: https://github.com/docker/build-push-action/issues/461
+      - name: setup docker buildx
+        uses: docker/setup-buildx-action@79abd3f86f79a9d68a23c75a09a9a85889262adf
+
+      # login against ghcr
+      - name: log into registry ${{ env.REGISTRY }}
+        uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # extract metadata (tags, labels) for Docker
+      - name: extract docker metadata
+        id: meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      # build and push Docker image with buildx
+      - name: build and push docker image
+        id: build-and-push
+        uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
+        with:
+          context: .
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      # sign the resulting docker image digest
+      - name: sign the published docker image
+        env:
+          COSIGN_EXPERIMENTAL: "true"
+        run: cosign sign ${{ steps.meta.outputs.tags }}@${{ steps.build-and-push.outputs.digest }}
+        
+      # authenticate to gcp
+      - id: authenticate to gcp
+        uses: 'google-github-actions/auth@v0'
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+      # deploy to google cloud run
+      - name: deploy to google cloud run
+        uses: 'google-github-actions/deploy-cloudrun@v0'
+        with:
+          service: '${{ env.SERVICE }}'
+          image: 'gcr.io/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}'
+          region: '${{ env.REGION }}'

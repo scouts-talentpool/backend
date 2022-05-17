@@ -30,6 +30,9 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
+        
+      - name: Migrate Database
+        run: npx prisma migrate deploy
 
       # authenticate to gcp
       - name: Authenticate to Google Cloud Platform

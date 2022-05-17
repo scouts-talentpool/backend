@@ -11,7 +11,13 @@ env:
   REGISTRY: europe-west6-docker.pkg.dev
   PROJECT_ID: ${{ secrets.GCP_PROJECT }}
   SERVICE: talentpool-api
-  PORT: 80
+  PORT: 8080
+  
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+  AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
+  AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID }}
+  AUTH0_USER_DATABASE: ${{ secrets.AUTH0_USER_DATABASE }}
+  AUTH0_AUDIENCE: ${{ secrets.AUTH0_AUDIENCE }}
   
 jobs:
   build:
@@ -20,8 +26,6 @@ jobs:
     permissions:
       contents: read
       id-token: write
-      
-    environment: production
       
     steps:
       - name: Checkout Repository
@@ -34,7 +38,7 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
           
-      - name: Login to GAR
+      - name: Login to Google Artifacts Registry
         uses: docker/login-action@v2
         with:
           registry: ${{ env.REGISTRY }}

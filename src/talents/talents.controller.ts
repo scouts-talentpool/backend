@@ -23,7 +23,6 @@ export class TalentsController {
     return await this.talentsService.createTalent({
       firstname: talentProfile.firstname,
       lastname: talentProfile.lastname,
-      birthdate: new Date(talentProfile.birthdate.toString())
     });
   }
 

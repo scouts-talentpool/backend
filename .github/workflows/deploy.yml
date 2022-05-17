@@ -13,6 +13,11 @@ env:
   SERVICE: talentpool-api
   
   PORT: 8080
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+  AUTH0_DOMAINL: ${{ secrets.AUTH0_DOMAIN }}
+  AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID }}
+  AUTH0_USER_DATABASE: ${{ secrets.AUTH0_USER_DATABASE }}
+  AUTH0_AUDIENCE: ${{ secrets.AUTH0_AUDIENCE }}
     
 jobs:
   build:
@@ -64,8 +69,8 @@ jobs:
           env_vars: |
             PORT=${{ env.PORT }}
           secrets: |
-            DATABASE_URL=${{ secrets.DATABASE_URL }}
-            AUTH0_DOMAIN=${{ secrets.AUTH0_DOMAIN }}
-            AUTH0_CLIENT_ID=${{ secrets.AUTH0_CLIENT_ID }}
-            AUTH0_USER_DATABASE=${{ secrets.AUTH0_USER_DATABASE }}
-            AUTH0_AUDIENCE=${{ secrets.AUTH0_AUDIENCE }}
+            DATABASE_URL=${{ env.DATABASE_URL }}
+            AUTH0_DOMAIN=${{ env.AUTH0_DOMAIN }}
+            AUTH0_CLIENT_ID=${{ env.AUTH0_CLIENT_ID }}
+            AUTH0_USER_DATABASE=${{ env.AUTH0_USER_DATABASE }}
+            AUTH0_AUDIENCE=${{ env.AUTH0_AUDIENCE }}

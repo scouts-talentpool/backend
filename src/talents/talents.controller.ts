@@ -23,6 +23,10 @@ export class TalentsController {
     return await this.talentsService.createTalent({
       firstname: talentProfile.firstname,
       lastname: talentProfile.lastname,
+      postalCode: talentProfile.postalCode,
+      placeOfResidence: talentProfile.placeOfResidence,
+      finalSchoolYear: talentProfile.finalSchoolYear,
+      desiredApprenticeships: talentProfile.desiredApprenticeships
     });
   }
 

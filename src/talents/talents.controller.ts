@@ -23,9 +23,9 @@ export class TalentsController {
     return await this.talentsService.createTalent({
       firstname: talentProfile.firstname,
       lastname: talentProfile.lastname,
-      postalCode: '2030',
-      placeOfResidence: 'Wolhusen',
-      desiredApprenticeships: 'Printed',
+      postalCode: talentProfile.postalCode,
+      placeOfResidence: talentProfile.placeOfResidence,
+      desiredApprenticeships: talentProfile.desiredApprenticeships,
     });
   }
 

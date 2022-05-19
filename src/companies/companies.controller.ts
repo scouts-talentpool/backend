@@ -9,7 +9,7 @@ import {
   UseGuards,
   Query,
 } from '@nestjs/common';
-import { TalentProfile, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { CompaniesService } from './companies.service';
 import { AuthGuard } from '../auth/auth.guard';
 

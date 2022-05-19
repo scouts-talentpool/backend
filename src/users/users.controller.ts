@@ -9,12 +9,12 @@ import {
   UseGuards,
   Query,
 } from '@nestjs/common';
-import { Role, Prisma } from '@prisma/client';
+import { Role } from '@prisma/client';
 import { UsersService } from './users.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { Auth0Service } from 'src/auth0.service';
 
-type User = {
+export type User = {
   id?: string;
   email: string;
   password?: string;
@@ -73,8 +73,6 @@ export class UsersController {
     @Query('cursor') cursor?: string,
     @Query('role') role?: string,
   ): Promise<User[]> {
-    let users: User[] = [];
-
     const localUsers = await this.usersService.getUsers({
       take: take ? +take : undefined,
       cursor: cursor
@@ -87,14 +85,14 @@ export class UsersController {
       },
     });
 
-    await Promise.all(
+    return await Promise.all(
       localUsers.map(async (user) => {
         const auth0User = await this.auth0Service.managementClient.getUser({
           id: user.id,
         });
         const { id, role, talentProfileId, companyProfileId } = user;
         const { given_name, family_name, email } = auth0User;
-        users.push({
+        return {
           id,
           role,
           talentProfileId,
@@ -102,11 +100,9 @@ export class UsersController {
           given_name,
           family_name,
           email,
-        });
+        };
       }),
     );
-
-    return users;
   }
 
   // @UseGuards(AuthGuard)
@@ -176,11 +172,11 @@ export class UsersController {
       where: { id },
       data: {
         role,
-        talentProfile: user.talentProfileId
-          ? { update: { id: user.talentProfileId } }
+        talentProfile: talentProfileId
+          ? { update: { id: talentProfileId } }
           : undefined,
-        companyProfile: user.companyProfileId
-          ? { update: { id: user.companyProfileId } }
+        companyProfile: companyProfileId
+          ? { update: { id: companyProfileId } }
           : undefined,
       },
     });

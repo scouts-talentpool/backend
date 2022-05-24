@@ -5,43 +5,104 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator entities {
+  provider               = "prisma-class-generator"
+  dryRun                 = false
+  seperateRelationFields = true
+  output                 = "../src/_gen/entities"
+}
+
 datasource db {
   provider = "postgres"
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  COMPANY
-  TALENT
-  ADMIN
+model Berechtigung {
+  id          Int     @id @default(autoincrement())
+  bezeichnung String
+  rollen      Rolle[]
+
+  @@map("berechtigungen")
 }
 
-model User {
-  id               String          @id
-  cursor           Int             @unique @default(autoincrement())
-  role             Role            @default(TALENT)
-  companyProfile   CompanyProfile? @relation(fields: [companyProfileId], references: [id])
-  companyProfileId String?
-  talentProfile    TalentProfile?  @relation(fields: [talentProfileId], references: [id])
-  talentProfileId  String?         @unique
+model Rolle {
+  id             Int            @id @default(autoincrement())
+  bezeichnung    String
+  berechtigungen Berechtigung[]
+  benutzer       Benutzer[]
+
+  @@map("rollen")
 }
 
-model CompanyProfile {
-  id        String @id @default(uuid())
-  cursor    Int    @unique @default(autoincrement())
-  name      String
-  location  String
-  employees User[]
+model Benutzer {
+  id       Int    @id @default(autoincrement())
+  authId   String @unique
+  rolle    Rolle  @relation(fields: [rolleId], references: [id])
+  rolleId  Int
+  talent   Talent @relation(fields: [talentId], references: [id])
+  talentId Int
+  firma    Firma  @relation(fields: [firmaId], references: [id])
+  firmaId  Int
+
+
+  @@map("benutzer")
 }
 
-model TalentProfile {
-  id        String   @id @default(uuid())
-  cursor    Int      @unique @default(autoincrement())
-  firstname String
-  lastname  String
-  user      User?
-  postalCode String
-  placeOfResidence String
-  finalSchoolYear Int?
-  desiredApprenticeships String
+model Talent {
+  id           Int         @id @default(autoincrement())
+  vorname      String
+  nachname     String
+  plz          Int
+  wohnort      String
+  lehrbeginn   DateTime
+  campus       Campus      @relation(fields: [campusId], references: [id])
+  campusId     Int
+  wunschberufe Lehrberuf[]
+  benutzer     Benutzer[]
+
+  @@map("talente")
+}
+
+model Campus {
+  id          Int      @id @default(autoincrement())
+  bezeichnung String
+  standort    String
+  talente     Talent[]
+
+  @@map("campus")
+}
+
+model Lehrberuf {
+  id          Int          @id @default(autoincrement())
+  bezeichnung String
+  talente     Talent[]
+  lehrstellen Lehrstelle[]
+
+  @@map("lehrberufe")
+}
+
+model Firma {
+  id             Int          @id @default(autoincrement())
+  firmenname     String
+  website        String
+  strasse        String
+  plz            Int
+  ort            String
+  firmenportrait String
+  lehrstellen    Lehrstelle[]
+  benutzer       Benutzer[]
+
+  @@map("mitgliederfirmen")
+}
+
+model Lehrstelle {
+  id            Int       @id @default(autoincrement())
+  startjahr     DateTime
+  stellenanzahl Int       @default(1)
+  firma         Firma     @relation(fields: [firmaId], references: [id])
+  firmaId       Int
+  lehrberuf     Lehrberuf @relation(fields: [lehrberufId], references: [id])
+  lehrberufId   Int
+
+  @@map("lehrstellen")
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { PrismaModel } from 'src/_gen/entities';
+import { UpdateTalentDto } from './dto/update-talent.dto';
 
 @Injectable()
 export class TalentService {
@@ -33,7 +34,7 @@ export class TalentService {
 
   async updateTalent(
     id: number,
-    benutzer: PrismaModel.Talent,
+    benutzer: UpdateTalentDto,
   ): Promise<PrismaModel.Talent> {
     return await this.prisma.talent.update({ where: { id }, data: benutzer });
   }

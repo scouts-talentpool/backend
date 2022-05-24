@@ -14,10 +14,12 @@ import { FirmaService } from './firma.service';
 import { AuthGuard } from '../auth/auth.guard';
 import {
   ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiOkResponse,
   ApiOperation,
-  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { UpdateFirmaDto } from './dto/update-firma.dto';
 
 @ApiBearerAuth()
 @ApiTags('firmen')
@@ -26,7 +28,7 @@ export class FirmaController {
   constructor(private readonly firmaService: FirmaService) {}
 
   @ApiOperation({ summary: 'Create Firma' })
-  @ApiResponse({ type: PrismaModel.Firma })
+  @ApiCreatedResponse({ type: PrismaModel.Firma })
   @UseGuards(AuthGuard)
   @Post()
   async createFirma(
@@ -35,7 +37,7 @@ export class FirmaController {
     return await this.firmaService.createFirma(firma);
   }
 
-  @ApiResponse({ type: [PrismaModel.Firma] })
+  @ApiOkResponse({ type: [PrismaModel.Firma] })
   @UseGuards(AuthGuard)
   @Get()
   async findCompanies(
@@ -45,7 +47,7 @@ export class FirmaController {
     return await this.firmaService.findCompanies(+take, +cursor);
   }
 
-  @ApiResponse({ type: PrismaModel.Firma })
+  @ApiOkResponse({ type: PrismaModel.Firma })
   @UseGuards(AuthGuard)
   @Get(':id')
   async findFirma(@Param('id') id: string): Promise<PrismaModel.Firma> {
@@ -53,18 +55,18 @@ export class FirmaController {
   }
 
   @ApiOperation({ summary: 'Update Firma' })
-  @ApiResponse({ type: PrismaModel.Firma })
+  @ApiOkResponse({ type: PrismaModel.Firma })
   @UseGuards(AuthGuard)
   @Patch(':id')
   async updateFirma(
     @Param('id') id: string,
-    @Body() firma: PrismaModel.Firma,
+    @Body() firma: UpdateFirmaDto,
   ): Promise<PrismaModel.Firma> {
     return await this.firmaService.updateFirma(+id, firma);
   }
 
   @ApiOperation({ summary: 'Delete Firma' })
-  @ApiResponse({ type: PrismaModel.Firma })
+  @ApiOkResponse({ type: PrismaModel.Firma })
   @UseGuards(AuthGuard)
   @Delete(':id')
   async removeFirma(@Param('id') id: string): Promise<PrismaModel.Firma> {

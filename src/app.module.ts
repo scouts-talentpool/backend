@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { TalentModule } from './talent/talent.module';
 import { FirmaModule } from './firma/firma.module';
 import { BenutzerModule } from './benutzer/benutzer.module';
+import { Auth0Service } from './auth0.service';
 
 @Module({
   imports: [
@@ -16,6 +17,6 @@ import { BenutzerModule } from './benutzer/benutzer.module';
     BenutzerModule,
   ],
   controllers: [AppController],
-  providers: [PrismaService],
+  providers: [PrismaService, Auth0Service],
 })
 export class AppModule {}

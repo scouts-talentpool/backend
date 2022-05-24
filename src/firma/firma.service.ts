@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { PrismaModel } from 'src/_gen/entities';
+import { UpdateFirmaDto } from './dto/update-firma.dto';
 
 @Injectable()
 export class FirmaService {
@@ -33,7 +34,7 @@ export class FirmaService {
 
   async updateFirma(
     id: number,
-    firma: PrismaModel.Firma,
+    firma: UpdateFirmaDto,
   ): Promise<PrismaModel.Firma> {
     return await this.prisma.firma.update({ where: { id }, data: firma });
   }

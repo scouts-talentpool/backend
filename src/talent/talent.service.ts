@@ -1,40 +1,44 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, Talent } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
+import { PrismaModel } from 'src/_gen/entities';
 
 @Injectable()
 export class TalentService {
   constructor(private prisma: PrismaService) {}
 
-  async createTalent(data: Prisma.TalentCreateInput) {
-    return await this.prisma.talent.create({ data });
+  async createTalent(talent: PrismaModel.Talent): Promise<PrismaModel.Talent> {
+    return await this.prisma.talent.create({ data: talent });
   }
 
-  async findTalente(params: {
-    take: number;
-    cursor: Prisma.TalentWhereUniqueInput;
-    where: Prisma.TalentWhereInput;
-  }) {
+  async findTalente(
+    take: number,
+    cursor: number,
+  ): Promise<PrismaModel.Talent[]> {
     return await this.prisma.talent.findMany({
-      ...params,
+      take,
+      cursor: {
+        id: cursor,
+      },
       orderBy: { id: 'asc' },
     });
   }
 
-  async findTalent(
-    where: Prisma.TalentWhereUniqueInput,
-  ): Promise<Talent | null> {
-    return await this.prisma.talent.findUnique({ where });
+  async findTalent(id: number): Promise<PrismaModel.Talent | null> {
+    return await this.prisma.talent.findUnique({
+      where: {
+        id,
+      },
+    });
   }
 
-  async updateTalent(params: {
-    where: Prisma.TalentWhereUniqueInput;
-    data: Prisma.TalentUpdateInput;
-  }): Promise<Talent> {
-    return await this.prisma.talent.update({ ...params });
+  async updateTalent(
+    id: number,
+    benutzer: PrismaModel.Talent,
+  ): Promise<PrismaModel.Talent> {
+    return await this.prisma.talent.update({ where: { id }, data: benutzer });
   }
 
-  async removeTalent(where: Prisma.TalentWhereUniqueInput): Promise<Talent> {
-    return await this.prisma.talent.delete({ where });
+  async removeTalent(id: number): Promise<PrismaModel.Talent> {
+    return await this.prisma.talent.delete({ where: { id } });
   }
 }

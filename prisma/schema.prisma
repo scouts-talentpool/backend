@@ -5,6 +5,13 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator entities {
+  provider               = "prisma-class-generator"
+  dryRun                 = false
+  seperateRelationFields = true
+  output                 = "../src/_gen/entities"
+}
+
 datasource db {
   provider = "postgres"
   url      = env("DATABASE_URL")
@@ -51,9 +58,8 @@ model Talent {
   campus       Campus      @relation(fields: [campusId], references: [id])
   campusId     Int
   wunschberufe Lehrberuf[]
+  benutzer     Benutzer[]
 
-
-  Benutzer Benutzer[]
   @@map("talente")
 }
 
@@ -84,8 +90,8 @@ model Firma {
   ort            String
   firmenportrait String
   lehrstellen    Lehrstelle[]
+  benutzer       Benutzer[]
 
-  Benutzer Benutzer[]
   @@map("mitgliederfirmen")
 }
 

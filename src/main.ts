@@ -7,10 +7,7 @@ import { PrismaModel } from './_gen/entities';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.enableCors({
-    origin: ['http://localhost:3000', 'https://scouts-talentpool.netlify.app'],
-    credentials: true,
-  });
+  app.enableCors();
 
   const prismaService: PrismaService = app.get(PrismaService);
   prismaService.enableShutdownHooks(app);
@@ -19,13 +16,17 @@ async function bootstrap() {
     .setTitle('Talentpool API')
     .setDescription('Backend für die ICT Scouts Talentpool Web App.')
     .setVersion('1.0')
+    .addBearerAuth()
+    .addTag('firmen')
+    .addTag('benutzer')
+    .addTag('talente')
     .build();
+
   const document = SwaggerModule.createDocument(app, config, {
     extraModels: [...PrismaModel.extraModels],
   });
-  SwaggerModule.setup('api', app, document, {
-    swaggerOptions: {},
-  });
+
+  SwaggerModule.setup('api', app, document);
 
   await app.listen(process.env.PORT || 2030);
 }

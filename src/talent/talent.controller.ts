@@ -13,11 +13,13 @@ import { TalentService } from './talent.service';
 import { AuthGuard } from '../auth/auth.guard';
 import {
   ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiOkResponse,
   ApiOperation,
-  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { PrismaModel } from 'src/_gen/entities';
+import { UpdateTalentDto } from './dto/update-talent.dto';
 
 @ApiBearerAuth()
 @ApiTags('talente')
@@ -26,7 +28,7 @@ export class TalentController {
   constructor(private readonly talentService: TalentService) {}
 
   @ApiOperation({ summary: 'Create Talent' })
-  @ApiResponse({
+  @ApiCreatedResponse({
     type: PrismaModel.Talent,
   })
   @UseGuards(AuthGuard)
@@ -37,7 +39,7 @@ export class TalentController {
     return await this.talentService.createTalent(talent);
   }
 
-  @ApiResponse({
+  @ApiOkResponse({
     type: [PrismaModel.Talent],
   })
   @UseGuards(AuthGuard)
@@ -49,7 +51,7 @@ export class TalentController {
     return await this.talentService.findTalente(+take, +cursor);
   }
 
-  @ApiResponse({
+  @ApiOkResponse({
     type: PrismaModel.Talent,
   })
   @UseGuards(AuthGuard)
@@ -59,20 +61,20 @@ export class TalentController {
   }
 
   @ApiOperation({ summary: 'Update Talent' })
-  @ApiResponse({
+  @ApiOkResponse({
     type: PrismaModel.Talent,
   })
   @UseGuards(AuthGuard)
   @Patch(':id')
   async updateTalent(
     @Param('id') id: string,
-    @Body() talent: PrismaModel.Talent,
+    @Body() talent: UpdateTalentDto,
   ): Promise<PrismaModel.Talent> {
     return await this.talentService.updateTalent(+id, talent);
   }
 
   @ApiOperation({ summary: 'Delete Talent' })
-  @ApiResponse({
+  @ApiOkResponse({
     type: PrismaModel.Talent,
   })
   @UseGuards(AuthGuard)

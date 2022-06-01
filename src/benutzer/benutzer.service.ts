@@ -1,58 +1,116 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { PrismaModel } from 'src/_gen/entities';
-import { UpdateBenutzerDto } from './dto/update-benutzer.dto';
+import { Prisma, Benutzer } from '@prisma/client';
 
 @Injectable()
 export class BenutzerService {
   constructor(private prisma: PrismaService) {}
 
-  async createBenutzer(
-    benutzer: PrismaModel.Benutzer,
-  ): Promise<PrismaModel.Benutzer> {
+  async createBenutzer(data: Prisma.BenutzerCreateInput): Promise<Benutzer> {
     return await this.prisma.benutzer.create({
-      data: benutzer,
-    });
-  }
-
-  async getBenutzers(
-    take?: number,
-    cursor?: number,
-    rolle?: string,
-  ): Promise<PrismaModel.Benutzer[]> {
-    return await this.prisma.benutzer.findMany({
-      take,
-      cursor: {
-        id: cursor,
-      },
-      where: {
+      data,
+      include: {
         rolle: {
-          bezeichnung: rolle,
+          include: {
+            berechtigungen: true,
+          },
+        },
+        firma: true,
+        talent: {
+          include: {
+            campus: true,
+            wunschberufe: true,
+          },
         },
       },
-      orderBy: { id: 'asc' },
     });
   }
 
-  async getBenutzer(id: number): Promise<PrismaModel.Benutzer | null> {
+  async getBenutzers(params: Prisma.BenutzerFindManyArgs): Promise<Benutzer[]> {
+    return await this.prisma.benutzer.findMany({
+      ...params,
+      include: {
+        rolle: {
+          include: {
+            berechtigungen: true,
+          },
+        },
+        firma: true,
+        talent: {
+          include: {
+            campus: true,
+            wunschberufe: true,
+          },
+        },
+      },
+    });
+  }
+
+  async getBenutzer(
+    params: Prisma.BenutzerFindUniqueArgs,
+  ): Promise<Benutzer | null> {
     return await this.prisma.benutzer.findUnique({
-      where: {
-        id,
+      ...params,
+      include: {
+        rolle: {
+          include: {
+            berechtigungen: true,
+          },
+        },
+        firma: true,
+        talent: {
+          include: {
+            campus: true,
+            wunschberufe: true,
+          },
+        },
       },
     });
   }
 
   async updateBenutzer(
-    id: number,
-    benutzer: UpdateBenutzerDto,
-  ): Promise<PrismaModel.Benutzer> {
+    where: Prisma.BenutzerWhereUniqueInput,
+    data: Prisma.BenutzerUpdateInput,
+  ): Promise<Benutzer> {
     return await this.prisma.benutzer.update({
-      where: { id },
-      data: benutzer,
+      where,
+      data,
+      include: {
+        rolle: {
+          include: {
+            berechtigungen: true,
+          },
+        },
+        firma: true,
+        talent: {
+          include: {
+            campus: true,
+            wunschberufe: true,
+          },
+        },
+      },
     });
   }
 
-  async removeBenutzer(id: number): Promise<PrismaModel.Benutzer> {
-    return await this.prisma.benutzer.delete({ where: { id } });
+  async removeBenutzer(
+    where: Prisma.BenutzerWhereUniqueInput,
+  ): Promise<Benutzer> {
+    return await this.prisma.benutzer.delete({
+      where,
+      include: {
+        rolle: {
+          include: {
+            berechtigungen: true,
+          },
+        },
+        firma: true,
+        talent: {
+          include: {
+            campus: true,
+            wunschberufe: true,
+          },
+        },
+      },
+    });
   }
 }

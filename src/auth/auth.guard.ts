@@ -13,10 +13,12 @@ import { ConfigService } from '@nestjs/config';
 export class AuthGuard implements CanActivate {
   private AUTH_AUDIENCE: string;
   private AUTH0_DOMAIN: string;
+  private NODE_ENV: string;
 
   constructor(private configService: ConfigService) {
     this.AUTH_AUDIENCE = configService.get<string>('AUTH_AUDIENCE');
     this.AUTH0_DOMAIN = `https://${configService.get<string>('AUTH0_DOMAIN')}/`;
+    this.NODE_ENV = configService.get<string>('NODE_ENV');
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -37,11 +39,13 @@ export class AuthGuard implements CanActivate {
       }),
     );
 
-    try {
-      await checkJwt(req, res);
-      return true;
-    } catch (error) {
-      throw new UnauthorizedException(error);
-    }
+    if (this.NODE_ENV !== 'development')
+      try {
+        await checkJwt(req, res);
+        return true;
+      } catch (error) {
+        throw new UnauthorizedException(error);
+      }
+    return true;
   }
 }

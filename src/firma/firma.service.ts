@@ -1,45 +1,77 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { PrismaModel } from 'src/_gen/entities';
-import { UpdateFirmaDto } from './dto/update-firma.dto';
+import { Firma, Prisma } from '@prisma/client';
 
 @Injectable()
 export class FirmaService {
   constructor(private prisma: PrismaService) {}
 
-  async createFirma(firma: PrismaModel.Firma): Promise<PrismaModel.Firma> {
-    return await this.prisma.firma.create({ data: firma });
-  }
-
-  async findCompanies(
-    take: number,
-    cursor: number,
-  ): Promise<PrismaModel.Firma[]> {
-    return await this.prisma.firma.findMany({
-      take,
-      cursor: {
-        id: cursor,
+  async createFirma(data: Prisma.FirmaCreateInput): Promise<Firma> {
+    return await this.prisma.firma.create({
+      data,
+      include: {
+        lehrstellen: {
+          include: {
+            lehrberuf: true,
+          },
+        },
       },
-      orderBy: { id: 'asc' },
     });
   }
 
-  async findFirma(id: number): Promise<PrismaModel.Firma | null> {
+  async findFirmen(params: Prisma.FirmaFindManyArgs): Promise<Firma[]> {
+    return await this.prisma.firma.findMany({
+      ...params,
+      include: {
+        lehrstellen: {
+          include: {
+            lehrberuf: true,
+          },
+        },
+      },
+    });
+  }
+
+  async findFirma(params: Prisma.FirmaFindUniqueArgs): Promise<Firma | null> {
     return await this.prisma.firma.findUnique({
-      where: {
-        id,
+      ...params,
+      include: {
+        lehrstellen: {
+          include: {
+            lehrberuf: true,
+          },
+        },
       },
     });
   }
 
   async updateFirma(
-    id: number,
-    firma: UpdateFirmaDto,
-  ): Promise<PrismaModel.Firma> {
-    return await this.prisma.firma.update({ where: { id }, data: firma });
+    where: Prisma.FirmaWhereUniqueInput,
+    data: Prisma.FirmaUpdateInput,
+  ): Promise<Firma> {
+    return await this.prisma.firma.update({
+      where,
+      data,
+      include: {
+        lehrstellen: {
+          include: {
+            lehrberuf: true,
+          },
+        },
+      },
+    });
   }
 
-  async removeFirma(id: number): Promise<PrismaModel.Firma> {
-    return await this.prisma.firma.delete({ where: { id } });
+  async removeFirma(where: Prisma.FirmaWhereUniqueInput): Promise<Firma> {
+    return await this.prisma.firma.delete({
+      where,
+      include: {
+        lehrstellen: {
+          include: {
+            lehrberuf: true,
+          },
+        },
+      },
+    });
   }
 }

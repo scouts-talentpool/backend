@@ -1,45 +1,64 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { PrismaModel } from 'src/_gen/entities';
-import { UpdateTalentDto } from './dto/update-talent.dto';
+import { Talent, Prisma } from '@prisma/client';
 
 @Injectable()
 export class TalentService {
   constructor(private prisma: PrismaService) {}
 
-  async createTalent(talent: PrismaModel.Talent): Promise<PrismaModel.Talent> {
-    return await this.prisma.talent.create({ data: talent });
-  }
-
-  async findTalente(
-    take: number,
-    cursor: number,
-  ): Promise<PrismaModel.Talent[]> {
-    return await this.prisma.talent.findMany({
-      take,
-      cursor: {
-        id: cursor,
+  async createTalent(data: Prisma.TalentCreateInput): Promise<Talent> {
+    return await this.prisma.talent.create({
+      data,
+      include: {
+        campus: true,
+        wunschberufe: true,
       },
-      orderBy: { id: 'asc' },
     });
   }
 
-  async findTalent(id: number): Promise<PrismaModel.Talent | null> {
+  async findTalente(params: Prisma.TalentFindManyArgs): Promise<Talent[]> {
+    return await this.prisma.talent.findMany({
+      ...params,
+      include: {
+        campus: true,
+        wunschberufe: true,
+      },
+    });
+  }
+
+  async findTalent(
+    params: Prisma.TalentFindUniqueArgs,
+  ): Promise<Talent | null> {
     return await this.prisma.talent.findUnique({
-      where: {
-        id,
+      ...params,
+      include: {
+        campus: true,
+        wunschberufe: true,
       },
     });
   }
 
   async updateTalent(
-    id: number,
-    benutzer: UpdateTalentDto,
-  ): Promise<PrismaModel.Talent> {
-    return await this.prisma.talent.update({ where: { id }, data: benutzer });
+    where: Prisma.TalentWhereUniqueInput,
+    data: Prisma.TalentUpdateInput,
+  ): Promise<Talent> {
+    return await this.prisma.talent.update({
+      where,
+      data,
+      include: {
+        campus: true,
+        wunschberufe: true,
+      },
+    });
   }
 
-  async removeTalent(id: number): Promise<PrismaModel.Talent> {
-    return await this.prisma.talent.delete({ where: { id } });
+  async removeTalent(where: Prisma.TalentWhereUniqueInput): Promise<Talent> {
+    return await this.prisma.talent.delete({
+      where,
+      include: {
+        campus: true,
+        wunschberufe: true,
+      },
+    });
   }
 }

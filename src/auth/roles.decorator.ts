@@ -1,6 +1,5 @@
 import { SetMetadata } from '@nestjs/common';
-import { PrismaModel } from 'src/_gen/entities';
+import { Rolle } from '@prisma/client';
 
 export const ROLES_KEY = 'roles';
-export const Rollen = (...rollen: PrismaModel.Rolle[]) =>
-  SetMetadata(ROLES_KEY, rollen);
+export const Rollen = (...rollen: Rolle[]) => SetMetadata(ROLES_KEY, rollen);

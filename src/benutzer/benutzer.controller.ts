@@ -63,7 +63,7 @@ export class BenutzerController {
     const benutzerRolle = await this.rolleService.getRolle({
       where: { id: benutzer.rolleId },
     });
-    if (benutzerRolle.bezeichnung === 'Admin')
+    if (benutzerRolle.bezeichnung === 'Firma')
       await this.auth0Service.managementClient.createUser({
         connection: this.configService.get<string>('AUTH0_USER_DATABASE'),
         user_id: newUser.authId,
@@ -120,7 +120,7 @@ export class BenutzerController {
     const benutzerRolle = await this.rolleService.getRolle({
       where: { id: benutzer.rolleId },
     });
-    if (benutzerRolle.bezeichnung === 'Admin')
+    if (benutzerRolle.bezeichnung === 'Firma')
       await this.auth0Service.managementClient.updateUser(
         {
           id: updatedUser.authId,
@@ -146,7 +146,7 @@ export class BenutzerController {
     const benutzerRolle = await this.rolleService.getRolle({
       where: { id: removedUser.rolleId },
     });
-    if (benutzerRolle.bezeichnung === 'Admin')
+    if (benutzerRolle.bezeichnung === 'Firma')
       await this.auth0Service.managementClient.deleteUser({ id });
 
     return removedUser;

@@ -29,30 +29,32 @@ model Rolle {
 
 model Benutzer {
   id       Int     @id @default(autoincrement())
-  authId   String  @unique @default(uuid())
+  authId   String  @unique @default(cuid())
   vorname  String
   nachname String
-  email    String
+  email    String  @unique
   rolle    Rolle   @relation(fields: [rolleId], references: [id])
   rolleId  Int
-  talent   Talent? @relation(fields: [talentId], references: [id])
-  talentId Int?    @unique
   firma    Firma?  @relation(fields: [firmaId], references: [id])
   firmaId  Int?
-
+  talent   Talent?
 
   @@map("benutzer")
 }
 
 model Talent {
-  id           Int         @id @default(autoincrement())
-  plz          Int
-  wohnort      String
-  lehrbeginn   DateTime
-  campus       Campus      @relation(fields: [campusId], references: [id])
-  campusId     Int
-  wunschberufe Lehrberuf[]
-  benutzer     Benutzer[]
+  id                        Int         @id @default(autoincrement())
+  plz                       Int
+  wohnort                   String
+  abschlussjahr             Int
+  meineStaerken             String
+  lieblingsCampusAktivitaet String
+  campus                    Campus      @relation(fields: [campusId], references: [id])
+  campusId                  Int
+  benutzer                  Benutzer    @relation(fields: [benutzerId], references: [id])
+  benutzerId                Int         @unique
+  wunschberufe              Lehrberuf[]
+  links                     Link[]
 
   @@map("talente")
 }
@@ -60,8 +62,11 @@ model Talent {
 model Campus {
   id          Int      @id @default(autoincrement())
   bezeichnung String
-  standort    String
+  strasse     String
+  plz         Int
+  ort         String
   talente     Talent[]
+  links       Link[]
 
   @@map("campus")
 }
@@ -71,6 +76,7 @@ model Lehrberuf {
   bezeichnung String
   talente     Talent[]
   lehrstellen Lehrstelle[]
+  links       Link[]
 
   @@map("lehrberufe")
 }
@@ -78,25 +84,42 @@ model Lehrberuf {
 model Firma {
   id             Int          @id @default(autoincrement())
   firmenname     String
-  website        String
   strasse        String
   plz            Int
   ort            String
   firmenportrait String
   lehrstellen    Lehrstelle[]
   benutzer       Benutzer[]
+  links          Link[]
 
   @@map("mitgliederfirmen")
 }
 
 model Lehrstelle {
-  id            Int       @id @default(autoincrement())
-  startjahr     DateTime
-  stellenanzahl Int       @default(1)
-  firma         Firma     @relation(fields: [firmaId], references: [id])
-  firmaId       Int
-  lehrberuf     Lehrberuf @relation(fields: [lehrberufId], references: [id])
-  lehrberufId   Int
+  id                 Int       @id @default(autoincrement())
+  startjahr          Int
+  stellenanzahl      Int       @default(1)
+  firma              Firma     @relation(fields: [firmaId], references: [id])
+  firmaId            Int
+  lehrberuf          Lehrberuf @relation(fields: [lehrberufId], references: [id])
+  lehrberufId        Int
+  ausbildungskonzept String
+  bewerbungsvorgehen String
+  ausbildungsorte    String[]
+  links              Link[]
 
   @@map("lehrstellen")
+}
+
+model Link {
+  id          Int          @id @default(autoincrement())
+  text        String?
+  url         String
+  lehrstellen Lehrstelle[]
+  campus      Campus[]
+  lehrberuf   Lehrberuf[]
+  firmen      Firma[]
+  talente     Talent[]
+
+  @@map("links")
 }

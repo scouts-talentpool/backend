@@ -47,11 +47,6 @@ export class BenutzerController {
           id: benutzer.firmaId,
         },
       },
-      talent: {
-        connect: {
-          id: benutzer.talentId,
-        },
-      },
       rolle: {
         connect: {
           id: benutzer.rolleId,

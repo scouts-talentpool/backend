@@ -10,6 +10,7 @@ export class TalentService {
     return await this.prisma.talent.create({
       data,
       include: {
+        benutzer: true,
         campus: true,
         wunschberufe: true,
       },
@@ -20,6 +21,7 @@ export class TalentService {
     return await this.prisma.talent.findMany({
       ...params,
       include: {
+        benutzer: true,
         campus: true,
         wunschberufe: true,
       },
@@ -32,6 +34,7 @@ export class TalentService {
     return await this.prisma.talent.findUnique({
       ...params,
       include: {
+        benutzer: true,
         campus: true,
         wunschberufe: true,
       },
@@ -46,6 +49,7 @@ export class TalentService {
       where,
       data,
       include: {
+        benutzer: true,
         campus: true,
         wunschberufe: true,
       },
@@ -56,6 +60,7 @@ export class TalentService {
     return await this.prisma.talent.delete({
       where,
       include: {
+        benutzer: true,
         campus: true,
         wunschberufe: true,
       },

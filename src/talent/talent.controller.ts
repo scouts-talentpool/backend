@@ -27,6 +27,11 @@ export class TalentController {
           id: data.campusId,
         },
       },
+      benutzer: {
+        connect: {
+          id: data.benutzerId,
+        },
+      },
     });
   }
 

@@ -1,8 +1,18 @@
 import { PrismaClient } from '@prisma/client';
 import { Prisma } from '@prisma/client';
 import faker from '@faker-js/faker';
+import { ManagementClient } from 'auth0';
+import * as dotenv from 'dotenv';
+import { connect } from 'http2';
 
 const prisma = new PrismaClient();
+const auth0 = new ManagementClient({
+  domain: process.env.AUTH0_DOMAIN,
+  clientId: process.env.AUTH0_CLIENT_ID,
+  clientSecret: process.env.AUTH0_CLIENT_SECRET,
+  audience: `https://${process.env.AUTH0_DOMAIN}/api/v2/`,
+  scope: 'create:users read:users delete:users',
+});
 
 const talentCount = 200;
 const firmaCount = 200;
@@ -129,11 +139,15 @@ const createAdmin = (
   nachname: string,
   email: string,
   rolleId: number,
-): Prisma.BenutzerCreateManyInput => ({
+): Prisma.BenutzerCreateInput => ({
   vorname,
   nachname,
   email,
-  rolleId: rolleId,
+  rolle: {
+    connect: {
+      id: rolleId,
+    },
+  },
 });
 
 async function main() {
@@ -156,23 +170,26 @@ async function main() {
   const newRollen = await prisma.rolle.findMany({});
 
   const adminRolleId = newRollen.find((r) => r.bezeichnung === 'Admin').id;
-  const newAdmins = await prisma.benutzer.createMany({
-    data: [
-      createAdmin('Lian', 'Studer', 'ln.studer@protonmail.ch', adminRolleId),
-      createAdmin('Kris', 'Huber', 'internet@krishuber.xyz', adminRolleId),
-      createAdmin(
-        'Stefan',
-        'Huber',
-        'stefan.huber@ict-scouts.ch',
-        adminRolleId,
-      ),
-      createAdmin(
-        'Urs',
-        'Nussbaumer',
-        'urs.nussbaumer@ict-bz.ch',
-        adminRolleId,
-      ),
-    ],
+  const admins: Prisma.BenutzerCreateInput[] = [
+    createAdmin('Lian', 'Studer', 'ln.studer@protonmail.ch', adminRolleId),
+    createAdmin('Kris', 'Huber', 'internet@krishuber.xyz', adminRolleId),
+    createAdmin('Stefan', 'Huber', 'stefan.huber@ict-scouts.ch', adminRolleId),
+    createAdmin('Urs', 'Nussbaumer', 'urs.nussbaumer@ict-bz.ch', adminRolleId),
+  ];
+
+  admins.forEach(async (admin) => {
+    const newAdmin = await prisma.benutzer.create({
+      data: admin,
+    });
+
+    await auth0.createUser({
+      connection: process.env.AUTH0_USER_DATABASE,
+      password: 'helloWORLD1234#',
+      user_id: newAdmin.authId,
+      email: newAdmin.email,
+      family_name: newAdmin.nachname,
+      given_name: newAdmin.vorname,
+    });
   });
 
   for (let index = 0; index < talentCount; index++) {

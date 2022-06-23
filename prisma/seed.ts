@@ -1,18 +1,17 @@
 import { PrismaClient } from '@prisma/client';
 import { Prisma } from '@prisma/client';
 import faker from '@faker-js/faker';
-import { ManagementClient } from 'auth0';
+// import { ManagementClient } from 'auth0';
 import * as dotenv from 'dotenv';
-import { connect } from 'http2';
 
 const prisma = new PrismaClient();
-const auth0 = new ManagementClient({
-  domain: process.env.AUTH0_DOMAIN,
-  clientId: process.env.AUTH0_CLIENT_ID,
-  clientSecret: process.env.AUTH0_CLIENT_SECRET,
-  audience: `https://${process.env.AUTH0_DOMAIN}/api/v2/`,
-  scope: 'create:users read:users delete:users',
-});
+// const auth0 = new ManagementClient({
+//   domain: process.env.AUTH0_DOMAIN,
+//   clientId: process.env.AUTH0_CLIENT_ID,
+//   clientSecret: process.env.AUTH0_CLIENT_SECRET,
+//   audience: `https://${process.env.AUTH0_DOMAIN}/api/v2/`,
+//   scope: 'create:users read:users delete:users',
+// });
 
 const talentCount = 200;
 const firmaCount = 200;
@@ -151,6 +150,8 @@ const createAdmin = (
 });
 
 async function main() {
+  dotenv.config();
+
   await prisma.talent.deleteMany({});
   await prisma.benutzer.deleteMany({});
   await prisma.campus.deleteMany({});
@@ -182,14 +183,14 @@ async function main() {
       data: admin,
     });
 
-    await auth0.createUser({
-      connection: process.env.AUTH0_USER_DATABASE,
-      password: 'helloWORLD1234#',
-      user_id: newAdmin.authId,
-      email: newAdmin.email,
-      family_name: newAdmin.nachname,
-      given_name: newAdmin.vorname,
-    });
+    // await auth0.createUser({
+    //   connection: process.env.AUTH0_USER_DATABASE,
+    //   password: 'helloWORLD1234#',
+    //   user_id: newAdmin.authId,
+    //   email: newAdmin.email,
+    //   family_name: newAdmin.nachname,
+    //   given_name: newAdmin.vorname,
+    // });
   });
 
   for (let index = 0; index < talentCount; index++) {
@@ -209,7 +210,7 @@ async function main() {
       mitarbeiter < mitarbeiterProFirmaCount;
       mitarbeiter++
     ) {
-      const newMitarbeiter = await prisma.benutzer.create({
+      await prisma.benutzer.create({
         data: fakeMitarbeiter(
           newFirma.id,
           newRollen.find((r) => r.bezeichnung === 'Mitarbeiter').id,
@@ -222,7 +223,7 @@ async function main() {
       lehrstelle < lehrstelleProFirmaCount;
       lehrstelle++
     ) {
-      const newLehrstelle = await prisma.lehrstelle.create({
+      await prisma.lehrstelle.create({
         data: fakeLehrstelle(
           faker.helpers.arrayElement(newLehrberufe).id,
           newFirma.id,

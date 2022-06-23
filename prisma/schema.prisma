@@ -44,7 +44,7 @@ model Benutzer {
 
 model Talent {
   id                        Int         @id @default(autoincrement())
-  plz                       Int
+  plz                       String
   wohnort                   String
   abschlussjahr             Int
   meineStaerken             String
@@ -63,7 +63,7 @@ model Campus {
   id          Int      @id @default(autoincrement())
   bezeichnung String
   strasse     String
-  plz         Int
+  plz         String
   ort         String
   talente     Talent[]
   links       Link[]
@@ -85,7 +85,7 @@ model Firma {
   id             Int          @id @default(autoincrement())
   firmenname     String
   strasse        String
-  plz            Int
+  plz            String
   ort            String
   firmenportrait String
   lehrstellen    Lehrstelle[]

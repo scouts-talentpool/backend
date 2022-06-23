@@ -13,22 +13,22 @@ const prisma = new PrismaClient();
 //   scope: 'create:users read:users delete:users',
 // });
 
-const talentCount = 200;
-const firmaCount = 200;
-const mitarbeiterProFirmaCount = 25;
-const lehrstelleProFirmaCount = 4;
+const talentCount = 50;
+const firmaCount = 50;
+const mitarbeiterProFirmaCount = 5;
+const lehrstelleProFirmaCount = 2;
 
 const campus: Prisma.CampusCreateInput[] = [
   {
     bezeichnung: 'ICT Campus Handelskammer beider Basel',
     strasse: 'Gründenstrasse 40',
-    plz: 4132,
+    plz: '4132',
     ort: 'Muttenz',
   },
   {
     bezeichnung: 'ICT Campus Bern',
     strasse: 'Lorrainestrasse 3a',
-    plz: 3013,
+    plz: '3013',
     ort: 'Bern',
   },
 ];
@@ -62,7 +62,7 @@ const fakeTalent = (
   rolleId: number,
 ): Prisma.TalentCreateInput => ({
   abschlussjahr: faker.date.future(6).getFullYear(),
-  plz: +faker.address.zipCode('####'),
+  plz: faker.address.zipCode('####'),
   wohnort: faker.address.cityName(),
   lieblingsCampusAktivitaet: faker.lorem.paragraph(),
   meineStaerken: faker.lorem.paragraph(),
@@ -89,7 +89,7 @@ const fakeFirma = (): Prisma.FirmaCreateInput => ({
   firmenname: faker.company.companyName(),
   firmenportrait: faker.lorem.paragraph(),
   strasse: faker.address.streetAddress(),
-  plz: +faker.address.zipCode('####'),
+  plz: faker.address.zipCode('####'),
   ort: faker.address.cityName(),
 });
 

@@ -5,6 +5,8 @@ services:
     image: postgres:14.1-alpine
     container_name: ictscouts_talentpool_db
     restart: always
+    ports:
+      - "5432:5432"
     environment:
       POSTGRES_PASSWORD: postgresdb
     networks:
@@ -15,7 +17,7 @@ services:
     container_name: ictscouts_talentpool_api
     restart: always
     ports:
-      - "2030:2030"
+      - "80:2030"
     env_file: .env
     depends_on:
       - database

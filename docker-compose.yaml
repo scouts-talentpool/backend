@@ -6,6 +6,6 @@ services:
     container_name: ictscouts_talentpool_dev_db
     restart: always
     ports:
-      - 8090:5432
+      - 5432:5432
     environment:
       - POSTGRES_PASSWORD=postgresdb

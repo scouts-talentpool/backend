@@ -56,7 +56,7 @@ export class BenutzerController {
     });
 
     const benutzerRolle = await this.rolleService.getRolle({
-      where: { id: benutzer.rolleId },
+      where: { id: newUser.rolleId },
     });
     if (benutzerRolle.bezeichnung === 'Firma')
       await this.auth0Service.managementClient.createUser({
@@ -113,7 +113,7 @@ export class BenutzerController {
     );
 
     const benutzerRolle = await this.rolleService.getRolle({
-      where: { id: benutzer.rolleId },
+      where: { id: updatedUser.rolleId },
     });
     if (benutzerRolle.bezeichnung === 'Firma')
       await this.auth0Service.managementClient.updateUser(

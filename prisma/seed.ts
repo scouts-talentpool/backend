@@ -114,7 +114,7 @@ const fakeMitarbeiter = (
 
 const fakeLehrstelle = (
   lehrberufId: number,
-  firmaId,
+  firmaId: any,
 ): Prisma.LehrstelleCreateInput => ({
   bewerbungsvorgehen: faker.lorem.paragraph(),
   ausbildungskonzept: faker.lorem.paragraph(),

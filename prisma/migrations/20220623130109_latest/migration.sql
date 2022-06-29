@@ -22,15 +22,15 @@ CREATE TABLE "benutzer" (
     "nachname" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "rolleId" INTEGER NOT NULL,
-    "firmaId" TEXT,
+    "firmaId" INTEGER,
 
     CONSTRAINT "benutzer_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "talente" (
-    "id" TEXT NOT NULL,
-    "plz" INTEGER NOT NULL,
+    "id" SERIAL NOT NULL,
+    "plz" TEXT NOT NULL,
     "wohnort" TEXT NOT NULL,
     "abschlussjahr" INTEGER NOT NULL,
     "meineStaerken" TEXT NOT NULL,
@@ -46,7 +46,7 @@ CREATE TABLE "campus" (
     "id" SERIAL NOT NULL,
     "bezeichnung" TEXT NOT NULL,
     "strasse" TEXT NOT NULL,
-    "plz" INTEGER NOT NULL,
+    "plz" TEXT NOT NULL,
     "ort" TEXT NOT NULL,
 
     CONSTRAINT "campus_pkey" PRIMARY KEY ("id")
@@ -62,10 +62,10 @@ CREATE TABLE "lehrberufe" (
 
 -- CreateTable
 CREATE TABLE "mitgliederfirmen" (
-    "id" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
     "firmenname" TEXT NOT NULL,
     "strasse" TEXT NOT NULL,
-    "plz" INTEGER NOT NULL,
+    "plz" TEXT NOT NULL,
     "ort" TEXT NOT NULL,
     "firmenportrait" TEXT NOT NULL,
 
@@ -77,7 +77,7 @@ CREATE TABLE "lehrstellen" (
     "id" SERIAL NOT NULL,
     "startjahr" INTEGER NOT NULL,
     "stellenanzahl" INTEGER NOT NULL DEFAULT 1,
-    "firmaId" TEXT NOT NULL,
+    "firmaId" INTEGER NOT NULL,
     "lehrberufId" INTEGER NOT NULL,
     "ausbildungskonzept" TEXT NOT NULL,
     "bewerbungsvorgehen" TEXT NOT NULL,
@@ -110,7 +110,7 @@ CREATE TABLE "_CampusToLink" (
 -- CreateTable
 CREATE TABLE "_LehrberufToTalent" (
     "A" INTEGER NOT NULL,
-    "B" TEXT NOT NULL
+    "B" INTEGER NOT NULL
 );
 
 -- CreateTable
@@ -121,7 +121,7 @@ CREATE TABLE "_LehrberufToLink" (
 
 -- CreateTable
 CREATE TABLE "_FirmaToLink" (
-    "A" TEXT NOT NULL,
+    "A" INTEGER NOT NULL,
     "B" INTEGER NOT NULL
 );
 
@@ -134,11 +134,14 @@ CREATE TABLE "_LehrstelleToLink" (
 -- CreateTable
 CREATE TABLE "_LinkToTalent" (
     "A" INTEGER NOT NULL,
-    "B" TEXT NOT NULL
+    "B" INTEGER NOT NULL
 );
 
 -- CreateIndex
 CREATE UNIQUE INDEX "benutzer_authId_key" ON "benutzer"("authId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "benutzer_email_key" ON "benutzer"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "talente_benutzerId_key" ON "talente"("benutzerId");

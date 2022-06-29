@@ -9,6 +9,8 @@ import { BenutzerModule } from './benutzer/benutzer.module';
 import { Auth0Service } from './auth0.service';
 import { RolleService } from './rolle/rolle.service';
 import { RolleModule } from './rolle/rolle.module';
+import { LehrstelleModule } from './lehrstelle/lehrstelle.module';
+import { LehrberufModule } from './lehrberuf/lehrberuf.module';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { RolleModule } from './rolle/rolle.module';
     FirmaModule,
     BenutzerModule,
     RolleModule,
+    LehrstelleModule,
+    LehrberufModule,
   ],
   controllers: [AppController],
   providers: [PrismaService, Auth0Service, RolleService],
